@@ -108,7 +108,7 @@ public class ViewForwardResolution extends ForwardResolution {
     
     protected String extractViewName(String uri, HttpServletRequest request) {
         String contextPath = request.getContextPath();
-        uri = StringUtils.stripStart(uri, contextPath);
+        uri = StringUtils.removeStart(uri, contextPath);
         return uri.replaceFirst(viewNameSuffixPattern, "");
         
     }
