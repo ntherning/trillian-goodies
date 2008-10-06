@@ -22,17 +22,17 @@ import junit.framework.TestCase;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Tests {@link HostnamedBasedPropertyPlaceHolderConfigurer}.
+ * Tests {@link HostnameBasedPropertyPlaceHolderConfigurer}.
  *
  * @author Niklas Therning
  * @version $Id$
  */
-public class HostnamedBasedPropertyPlaceHolderConfigurerTest extends TestCase {
+public class HostnameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testConfigurer() throws Exception {
-        HostnamedBasedPropertyPlaceHolderConfigurer configurer = 
-            new HostnamedBasedPropertyPlaceHolderConfigurer() {
+        HostnameBasedPropertyPlaceHolderConfigurer configurer = 
+            new HostnameBasedPropertyPlaceHolderConfigurer() {
             @Override
             protected String getHostName() throws UnknownHostException {
                 return "foobar";

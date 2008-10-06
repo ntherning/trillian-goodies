@@ -50,10 +50,10 @@ import org.springframework.util.Assert;
  * @author Niklas Therning
  * @version $Id$
  */
-public class HostnamedBasedPropertyPlaceHolderConfigurer extends
+public class HostnameBasedPropertyPlaceHolderConfigurer extends
                 PropertyPlaceholderConfigurer {
 
-    private static final Log log = LogFactory.getLog(HostnamedBasedPropertyPlaceHolderConfigurer.class);
+    private static final Log log = LogFactory.getLog(HostnameBasedPropertyPlaceHolderConfigurer.class);
     
     private String prefix = "/spring";
     
