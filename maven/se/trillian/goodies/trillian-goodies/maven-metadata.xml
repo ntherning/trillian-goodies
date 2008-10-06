@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><metadata>
   <groupId>se.trillian.goodies</groupId>
   <artifactId>trillian-goodies</artifactId>
-  <version>0.2</version>
+  <version>0.3</version>
   <versioning>
-    <release>0.2</release>
+    <release>0.3</release>
     <versions>
-      <version>0.2</version>
+      <version>0.3</version>
     </versions>
-    <lastUpdated>20081006155049</lastUpdated>
+    <lastUpdated>20081006192300</lastUpdated>
   </versioning>
 </metadata>
