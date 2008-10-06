@@ -122,7 +122,7 @@
     <repository>
       <id>internal.repo</id>
       <name>Trillian Goodies Repository</name>
-      <url>scm:svn:https://trillian-goodies.googlecode.com/svn/maven</url>
+      <url>https://trillian-goodies.googlecode.com/svn/maven</url>
     </repository>
   </distributionManagement>
   
