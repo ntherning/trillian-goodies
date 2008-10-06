@@ -118,4 +118,12 @@
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>internal.repo</id>
+      <name>Trillian Goodies Repository</name>
+      <url>scm:svn:https://trillian-goodies.googlecode.com/svn/maven</url>
+    </repository>
+  </distributionManagement>
+  
 </project>
