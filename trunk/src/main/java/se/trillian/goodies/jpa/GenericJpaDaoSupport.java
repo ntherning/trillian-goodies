@@ -28,26 +28,26 @@ import org.springframework.orm.jpa.support.JpaDaoSupport;
  */
 public abstract class GenericJpaDaoSupport<ItemType> extends JpaDaoSupport {
 
-	/**
-	 * Subclasses needs to implement this to provide the actual JPA class
-	 * which should be returned in load()-functions.
-	 * 
-	 * @return the class that JPA instantiates when returning items from
-	 *         the database.
-	 */
-	protected abstract Class<? extends ItemType> getJpaClass();
+    /**
+     * Subclasses needs to implement this to provide the actual JPA class which
+     * should be returned in load()-functions.
+     * 
+     * @return the class that JPA instantiates when returning items from the
+     *         database.
+     */
+    protected abstract Class<? extends ItemType> getJpaClass();
 
-	public void delete(ItemType item) {
-		getJpaTemplate().remove(item);
-	}
+    public void delete(ItemType item) {
+        getJpaTemplate().remove(item);
+    }
 
-	public void save(ItemType item) {
-		getJpaTemplate().persist(item);
-	}
+    public void save(ItemType item) {
+        getJpaTemplate().persist(item);
+    }
 
-	@SuppressWarnings("all")
-	public ItemType load(Object id) {
-		return (ItemType) getJpaTemplate().find(getJpaClass(), id);
-	}
+    @SuppressWarnings("all")
+    public ItemType load(Object id) {
+        return (ItemType) getJpaTemplate().find(getJpaClass(), id);
+    }
 
 }
