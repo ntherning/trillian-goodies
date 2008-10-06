@@ -20,25 +20,26 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 /**
- * Tests {@link HostnameBasedPropertyPlaceHolderConfigurer}.
+ * Tests {@link HostNameBasedPropertyPlaceHolderConfigurer}.
  *
  * @author Niklas Therning
  * @version $Id$
  */
-public class HostnameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
+public class HostNameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testConfigurer() throws Exception {
-        HostnameBasedPropertyPlaceHolderConfigurer configurer = 
-            new HostnameBasedPropertyPlaceHolderConfigurer() {
+        HostNameBasedPropertyPlaceHolderConfigurer configurer = 
+            new HostNameBasedPropertyPlaceHolderConfigurer() {
             @Override
             protected String getHostName() throws UnknownHostException {
                 return "foobar";
             }
         };
-        configurer.setPrefix("se/trillian/goodies/spring/");
+        configurer.setLocation(new ClassPathResource("/se/trillian/goodies/spring/spring.properties"));
         configurer.setIgnoreUnresolvablePlaceholders(true);
         ClassPathXmlApplicationContext context = 
             new ClassPathXmlApplicationContext("context.xml", this.getClass());
