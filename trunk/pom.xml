@@ -5,9 +5,10 @@
   <artifactId>trillian-goodies</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>stripesgoodies</name>
+  <name>Trillian Goodies</name>
   <url>http://trillian-goodies.googlecode.com</url>
-  <description>Trillian Goodies.</description>
+  <description>Trillian Goodies provides some good-to-have classes when 
+        developing applications with Spring, Hibernate, Stripes and Java EE.</description>
   <licenses>
       <license>
           <name>The Apache Software License, Version 2.0</name>
@@ -16,8 +17,41 @@
       </license>
   </licenses>
   <scm>
+      <connection>scm:svn:http://trillian-goodies.googlecode.com/svn/trunk</connection>
+      <developerConnection>scm:svn:https://trillian-goodies.googlecode.com/svn/trunk</developerConnection>
+      <tag>HEAD</tag>  
       <url>https://trillian-goodies.googlecode.com/svn/trunk/</url>
   </scm>
+  <organization>
+    <name>Trillian AB</name>
+    <url>http://www.trillian.se</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>henric.muller</id>
+      <name>Henric Müller</name>
+      <email>henric@trillian.se</email>
+      <organization>Trillian AB</organization>
+      <organizationUrl>http://www.trillian.se</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>niklas.therning</id>
+      <name>Niklas Therning</name>
+      <email>niklas@trillian.se</email>
+      <organization>Trillian AB</organization>
+      <organizationUrl>http://www.trillian.se</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -47,10 +81,11 @@
         <optional>true</optional>
     </dependency>
     <dependency>
-    	<groupId>springframework</groupId>
+    	<groupId>org.springframework</groupId>
     	<artifactId>spring-web</artifactId>
     	<version>1.2.6</version>
-        <scope>optional</scope>
+        <scope>compile</scope>
+        <optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
