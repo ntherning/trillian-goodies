@@ -64,7 +64,7 @@ public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSuppo
         }
         getJpaTemplate().execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                return entityManager.createQuery(deleteQuery).setParameter(0, id).executeUpdate();
+                return entityManager.createQuery(deleteQuery).setParameter(1, id).executeUpdate();
             }
         });
     }
