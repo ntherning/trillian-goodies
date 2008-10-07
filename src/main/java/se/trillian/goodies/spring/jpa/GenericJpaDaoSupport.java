@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package se.trillian.goodies.jpa;
+package se.trillian.goodies.spring.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
