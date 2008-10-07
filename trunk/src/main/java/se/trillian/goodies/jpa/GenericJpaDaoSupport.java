@@ -30,10 +30,12 @@ import org.springframework.orm.jpa.support.JpaDaoSupport;
  * @author Henric Müller
  * @version $Id$
  */
-public abstract class GenericJpaDaoSupport<ItemType, IdType> extends
-        JpaDaoSupport {
+public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSupport {
 
-    public static final String DEFAULT_ID_COLUMN_NAME = "id";
+    public static final String DEFAULT_ID_PROPERTY_NAME = "id";
+    
+    private String deleteQuery = null;
+    
     /**
      * Subclasses needs to implement this to provide the actual JPA class which
      * should be returned in load()-functions.
@@ -43,13 +45,12 @@ public abstract class GenericJpaDaoSupport<ItemType, IdType> extends
      */
     protected abstract Class<? extends ItemType> getJpaClass();
 
-    protected String getIdColumnName() {
-        return DEFAULT_ID_COLUMN_NAME;
+    protected String getIdPropertyName() {
+        return DEFAULT_ID_PROPERTY_NAME;
     }
     
     protected String getEntityName() {
-        String className = getJpaClass().getName();
-        return className.substring(className.lastIndexOf('.'));
+        return getJpaClass().getSimpleName();
     }
     
     public void delete(ItemType item) {
@@ -58,9 +59,12 @@ public abstract class GenericJpaDaoSupport<ItemType, IdType> extends
 
     
     public void deleteById(final IdType id) {
+        if (deleteQuery == null) {
+            deleteQuery = "delete from " + getEntityName() + " where " + getIdPropertyName() + "=?";
+        }
         getJpaTemplate().execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                return entityManager.createQuery("delete from " + getEntityName() + " where id=?").setParameter(0, id).executeUpdate();
+                return entityManager.createQuery(deleteQuery).setParameter(0, id).executeUpdate();
             }
         });
     }
