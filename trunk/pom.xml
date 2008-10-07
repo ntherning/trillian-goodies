@@ -3,7 +3,7 @@
   <groupId>se.trillian.goodies</groupId>
   <artifactId>trillian-goodies</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.4-SNAPSHOT</version>
   <name>Trillian Goodies</name>
   <url>http://trillian-goodies.googlecode.com</url>
   <description>Trillian Goodies provides some good-to-have classes when 
@@ -149,7 +149,7 @@
     <repository>
       <id>internal.repo</id>
       <name>Trillian Goodies Repository</name>
-      <url>scp:a0007800@ssh.levonline.com/home/userA/a0007800/public_html/trillian.se/maven</url>
+      <url>scp://a0007800@ssh.levonline.com/home/userA/a0007800/public_html/trillian.se/maven</url>
     </repository>
   </distributionManagement>
   
