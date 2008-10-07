@@ -26,7 +26,7 @@ import org.springframework.orm.jpa.support.JpaDaoSupport;
  * @author Henric Müller
  * @version $Id$
  */
-public abstract class GenericJpaDaoSupport<ItemType> extends JpaDaoSupport {
+public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSupport {
 
     /**
      * Subclasses needs to implement this to provide the actual JPA class which
@@ -46,7 +46,7 @@ public abstract class GenericJpaDaoSupport<ItemType> extends JpaDaoSupport {
     }
 
     @SuppressWarnings("all")
-    public ItemType load(Object id) {
+    public ItemType load(IdType id) {
         return (ItemType) getJpaTemplate().find(getJpaClass(), id);
     }
 
