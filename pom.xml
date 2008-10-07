@@ -149,7 +149,7 @@
     <repository>
       <id>internal.repo</id>
       <name>Trillian Goodies Repository</name>
-      <url>file://${basedir}/dist</url>
+      <url>scp:a0007800@ssh.levonline.com/home/userA/a0007800/public_html/trillian.se/maven</url>
     </repository>
   </distributionManagement>
   
