@@ -15,6 +15,10 @@
  */
 package se.trillian.goodies.jpa;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+
+import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 /**
@@ -26,8 +30,10 @@ import org.springframework.orm.jpa.support.JpaDaoSupport;
  * @author Henric Müller
  * @version $Id$
  */
-public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSupport {
+public abstract class GenericJpaDaoSupport<ItemType, IdType> extends
+        JpaDaoSupport {
 
+    public static final String DEFAULT_ID_COLUMN_NAME = "id";
     /**
      * Subclasses needs to implement this to provide the actual JPA class which
      * should be returned in load()-functions.
@@ -37,8 +43,26 @@ public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSuppo
      */
     protected abstract Class<? extends ItemType> getJpaClass();
 
+    protected String getIdColumnName() {
+        return DEFAULT_ID_COLUMN_NAME;
+    }
+    
+    protected String getEntityName() {
+        String className = getJpaClass().getName();
+        return className.substring(className.lastIndexOf('.'));
+    }
+    
     public void delete(ItemType item) {
         getJpaTemplate().remove(item);
+    }
+
+    
+    public void deleteById(final IdType id) {
+        getJpaTemplate().execute(new JpaCallback() {
+            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+                return entityManager.createQuery("delete from " + getEntityName() + " where id=?").setParameter(0, id).executeUpdate();
+            }
+        });
     }
 
     public void save(ItemType item) {
