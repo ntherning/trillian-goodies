@@ -147,9 +147,9 @@
   </build>
   <distributionManagement>
     <repository>
-      <id>internal.repo</id>
-      <name>Trillian Goodies Repository</name>
-      <url>scp://a0007800@ssh.levonline.com/home/userA/a0007800/public_html/trillian.se/maven</url>
+      <id>trillian.repo</id>
+      <name>Trillian Repository</name>
+      <url>scpexe://a0007800@ssh.levonline.com/home/userA/a0007800/public_html/trillian.se/maven</url>
     </repository>
   </distributionManagement>
   
