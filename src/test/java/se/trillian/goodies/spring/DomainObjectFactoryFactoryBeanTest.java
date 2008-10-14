@@ -25,7 +25,7 @@ import com.agical.rmock.extension.junit.RMockTestCase;
 /**
  * Tests {@link DomainObjectFactoryFactoryBean}.
  *
- * @author NiklasTherning
+ * @author Niklas Therning
  * @version $Id$
  */
 public class DomainObjectFactoryFactoryBeanTest extends RMockTestCase {

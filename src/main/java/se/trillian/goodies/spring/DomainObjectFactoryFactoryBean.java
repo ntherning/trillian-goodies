@@ -32,7 +32,6 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.util.Assert;
 
-
 /**
  * Spring {@link FactoryBean} which creates factories for domain objects. The 
  * <code>interfaceClass</code> property specifies the domain object interface. 
@@ -52,27 +51,27 @@ import org.springframework.util.Assert;
  * {@link FactoryBean}.
  * </p>
  *
- * @author NiklasTherning
+ * @author Niklas Therning
  * @version $Id$
  */
 public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implements BeanFactoryAware {
     
     private static final Object[] EMPTY_ARGS = new Object[0];
     
-    private Class interfaceClass;
-    private Class implementationClass;
-    private Class factoryClass;
+    private Class<?> interfaceClass;
+    private Class<?> implementationClass;
+    private Class<?> factoryClass;
     private ListableBeanFactory beanFactory;
     
-    public void setImplementationClass(Class implementationClass) {
+    public void setImplementationClass(Class<?> implementationClass) {
         this.implementationClass = implementationClass;
     }
 
-    public void setInterfaceClass(Class interfaceClass) {
+    public void setInterfaceClass(Class<?> interfaceClass) {
         this.interfaceClass = interfaceClass;
     }
 
-    public void setFactoryClass(Class factoryClass) {
+    public void setFactoryClass(Class<?> factoryClass) {
         this.factoryClass = factoryClass;
     }
 
@@ -86,7 +85,7 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
                 new Class[] {factoryClass}, new FactoryInvocationHandler());
     }
 
-    public Class getObjectType() {
+    public Class<?> getObjectType() {
         return factoryClass;
     }
 
@@ -114,9 +113,9 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
         super.afterPropertiesSet();
     }
 
-    private static Constructor findMatchingConstructor(Class clazz, Method m) {
-        LinkedList<Constructor> constructors = new LinkedList<Constructor>();
-        for (Constructor c: clazz.getDeclaredConstructors()) {
+    private static Constructor<?> findMatchingConstructor(Class<?> clazz, Method m) {
+        LinkedList<Constructor<?>> constructors = new LinkedList<Constructor<?>>();
+        for (Constructor<?> c: clazz.getDeclaredConstructors()) {
             if (isParameterTypesPrefix(m.getParameterTypes(), c.getParameterTypes())) {
                 constructors.add(c);
             }
@@ -132,7 +131,7 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
         return constructors.getFirst();
     }
     
-    private static boolean isParameterTypesPrefix(Class[] prefixTypes, Class[] types) {
+    private static boolean isParameterTypesPrefix(Class<?>[] prefixTypes, Class<?>[] types) {
         if (prefixTypes.length > types.length) {
             return false;
         }
@@ -145,10 +144,10 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
     }
     
     private class FactoryInvocationHandler implements InvocationHandler {
-        private final Map<Method, Constructor> constructors;
+        private final Map<Method, Constructor<?>> constructors;
         
         public FactoryInvocationHandler() {
-            this.constructors = new HashMap<Method, Constructor>();
+            this.constructors = new HashMap<Method, Constructor<?>>();
             
             for (Method m: factoryClass.getMethods()) {
                 this.constructors.put(m, findMatchingConstructor(implementationClass, m));
@@ -170,8 +169,8 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
             if (args == null) {
                 args = EMPTY_ARGS;
             }
-            Constructor constructor = constructors.get(method);
-            Class[] paramTypes = constructor.getParameterTypes();
+            Constructor<?> constructor = constructors.get(method);
+            Class<?>[] paramTypes = constructor.getParameterTypes();
             if (paramTypes.length == args.length) {
                 return constructor.newInstance(args);
             }
