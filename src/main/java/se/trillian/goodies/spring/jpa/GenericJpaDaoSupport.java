@@ -15,6 +15,7 @@
  */
 package se.trillian.goodies.spring.jpa;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
@@ -50,7 +51,11 @@ public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSuppo
     }
     
     protected String getEntityName() {
-        return getJpaClass().getSimpleName();
+        Entity entity = getJpaClass().getAnnotation(Entity.class);
+        if (entity == null) {
+            return getJpaClass().getSimpleName();
+        }
+        return entity.name();
     }
     
     public void delete(ItemType item) {
