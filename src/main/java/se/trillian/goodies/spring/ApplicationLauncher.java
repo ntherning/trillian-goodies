@@ -71,7 +71,7 @@ public class ApplicationLauncher {
                         + "<log4j-properties-file>] [context1.xml [context2.xml ...]] ...");
     }
     
-    public static final void main(String[] args) throws Exception {
+    public static final void main(String[] args) throws Throwable {
         /*
          * Use BasicConfigurator temporarily to enable logging before the 
          * log4j.properties file has been read
@@ -81,31 +81,14 @@ public class ApplicationLauncher {
         boolean useWrapper = false;
         try {
             useWrapper = WrapperManager.isControlledByNativeWrapper();
-        } catch (Exception e) {
-            if (!(e instanceof ClassNotFoundException)) {
+        } catch (Error e) {
+            if (!(e instanceof NoClassDefFoundError)) {
                 throw e;
             }
         }
         
         if (useWrapper) {
-            log.info("Running using wrapper");
-            final ApplicationLauncher launcher = new ApplicationLauncher();
-            WrapperManager.start(new WrapperListener() {
-                public int stop(int exitCode) {
-                    return launcher.stop(exitCode);
-                }
-                public Integer start(String[] args) {
-                    return launcher.start(args);
-                }
-                public void controlEvent(int event) {
-                    if (   event == WrapperManager.WRAPPER_CTRL_LOGOFF_EVENT
-                        && WrapperManager.isLaunchedAsService()) {
-                            // Ignore
-                    } else {
-                        WrapperManager.stop(0);
-                    }
-                }
-            }, args);
+            WrapperFacade.launch(new ApplicationLauncher(), args);
         } else {
             new ApplicationLauncher().start(args);
         }
@@ -208,6 +191,25 @@ public class ApplicationLauncher {
         
         return exitCode;
     }
+}
 
-
+class WrapperFacade {
+    static void launch(final ApplicationLauncher launcher, String[] args) {
+        WrapperManager.start(new WrapperListener() {
+            public int stop(int exitCode) {
+                return launcher.stop(exitCode);
+            }
+            public Integer start(String[] args) {
+                return launcher.start(args);
+            }
+            public void controlEvent(int event) {
+                if (   event == WrapperManager.WRAPPER_CTRL_LOGOFF_EVENT
+                    && WrapperManager.isLaunchedAsService()) {
+                        // Ignore
+                } else {
+                    WrapperManager.stop(0);
+                }
+            }
+        }, args);
+    }
 }
