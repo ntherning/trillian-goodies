@@ -42,7 +42,7 @@ public class MockBeanFactory {
      * @return the stub instance.
      */
     public static <T> T stub(Class<T> clazz, Object ... props) {
-        return mock(clazz, null, props);
+        return mock(clazz, (T) null, props);
     }
     
     /**
@@ -54,7 +54,7 @@ public class MockBeanFactory {
      * @return the stub instance.
      */
     public static <T> T stub(Class<T> clazz, Map<String, Object> properties) {
-        return mock(clazz, null, properties);
+        return mock(clazz, (T) null, properties);
     }
 
     /**
@@ -84,30 +84,82 @@ public class MockBeanFactory {
      * 
      * @param clazz the interface {@link Class} to create a mock for.
      * @param target the target object.
+     * @param properties a {@link Map} used to initialize the properties.
+     * @return the mock instance.
+     */
+    public static <T> T mock(Class<T> clazz, MethodHandler<T> methodHandler, Map<String, Object> properties) {
+        T bean = mock(clazz, methodHandler);
+        for (Entry<String, Object> entry: properties.entrySet()) {
+            ((MockBean) bean)._set(entry.getKey(), entry.getValue());
+        }
+        return bean;
+    }
+    
+    /**
+     * Creates a mock implementing the specified interface {@link Class} and
+     * initializes the properties according to the specified {@link Map}.
+     * Method calls on the returned instance which don't match a property
+     * getter or setter will be forwarded to the target object.
+     * 
+     * @param clazz the interface {@link Class} to create a mock for.
+     * @param target the target object.
      * @param props pairs of property names and values. Must contain an even 
      *        number of objects.
      * @return the mock instance.
      */
     public static <T> T mock(Class<T> clazz, T target, Object ... props) {
+        return mock(clazz, new TargetObjectMethodHandler<T>(target), props);
+    }
+    
+    /**
+     * Creates a mock implementing the specified interface {@link Class} and
+     * initializes the properties according to the specified {@link Map}.
+     * Method calls on the returned instance which don't match a property
+     * getter or setter will be forwarded to the target object.
+     * 
+     * @param clazz the interface {@link Class} to create a mock for.
+     * @param target the target object.
+     * @param props pairs of property names and values. Must contain an even 
+     *        number of objects.
+     * @return the mock instance.
+     */
+    public static <T> T mock(Class<T> clazz, MethodHandler<T> methodHandler, Object ... props) {
         if (props.length % 2 == 1) {
             throw new IllegalArgumentException();
         }
         @SuppressWarnings("unchecked")
         T bean = (T) Proxy.newProxyInstance(clazz.getClassLoader(), 
                                       new Class[] {clazz, MockBean.class}, 
-                new MockBeanInvocationHandler(clazz, target));
+                new MockBeanInvocationHandler(clazz, methodHandler));
         for (int i = 0; i < props.length; i += 2) {
             ((MockBean) bean)._set(props[i].toString(), props[i + 1]);
         }
         return bean;
     }
     
+    private static class TargetObjectMethodHandler<T> implements MethodHandler<T> {
+        private final T target;
+        public TargetObjectMethodHandler(T target) {
+            this.target = target;
+        }
+        public Object call(T self, Method method, Object[] args) {
+            if (target != null) {
+                try {
+                    return method.invoke(target, args);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return null;
+        }
+    }
+    
     private static class MockBeanInvocationHandler<T> implements InvocationHandler {
         private final Class<T> clazz;
         private final Map<String, Object> properties;
-        private final T target;
+        private final MethodHandler<T> target;
         
-        public MockBeanInvocationHandler(Class<T> clazz, T target) {
+        public MockBeanInvocationHandler(Class<T> clazz, MethodHandler<T> target) {
             this.clazz = clazz;
             this.properties = new HashMap<String, Object>();
             this.target = target;
@@ -160,7 +212,7 @@ public class MockBeanFactory {
                     return properties;
                 }
                 if (method.getName().equals("_copy")) {
-                    return mock(clazz, target, new HashMap<String, Object>(properties));
+                    return mock(clazz, (MethodHandler<T>) target, new HashMap<String, Object>(properties));
                 }
             }
             if (args != null) {
@@ -185,10 +237,7 @@ public class MockBeanFactory {
                 }
             }
             
-            if (target != null) {
-                return method.invoke(target, args);
-            }
-            return null;
+            return target == null ? null : target.call((T) proxy, method, args);
         }
         
         protected void checkHasProperty(Object o, String propertyName) {
