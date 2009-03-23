@@ -16,9 +16,9 @@
       </license>
   </licenses>
   <scm>
-      <connection>scm:svn:http://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.12</connection>
-      <developerConnection>scm:svn:https://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.12</developerConnection>  
-      <url>https://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.12</url>
+      <connection>scm:svn:http://trillian-goodies.googlecode.com/svn/trunk</connection>
+      <developerConnection>scm:svn:https://trillian-goodies.googlecode.com/svn/trunk</developerConnection>  
+      <url>https://trillian-goodies.googlecode.com/svn/trunk</url>
   </scm>
   <organization>
     <name>Trillian AB</name>
