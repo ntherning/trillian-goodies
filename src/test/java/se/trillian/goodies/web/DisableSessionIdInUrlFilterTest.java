@@ -54,8 +54,8 @@ public class DisableSessionIdInUrlFilterTest extends TestCase {
     }
     
     public void testSessionIdInRequestUrlIsRemoved() throws Exception {
-        request.setServerName("www.spamdrain.net");
-        request.setRequestURI("/home_en.html;jsessionid=1047kv5xa62lf");
+        request.setServerName("www.example.com");
+        request.setRequestURI("/index.html;jsessionid=1047kv5xa62lf");
         request.setRequestedSessionIdFromURL(true);
         final boolean[] called = new boolean[] {false};
         
@@ -65,8 +65,8 @@ public class DisableSessionIdInUrlFilterTest extends TestCase {
                 
                 HttpServletRequest request = (HttpServletRequest) req;
                 assertFalse(request.isRequestedSessionIdFromURL());
-                assertEquals("/home_en.html", request.getRequestURI());
-                assertEquals("http://www.spamdrain.net:80/home_en.html", 
+                assertEquals("/index.html", request.getRequestURI());
+                assertEquals("http://www.example.com:80/index.html", 
                              request.getRequestURL().toString());
                 called[0] = true;
             }
