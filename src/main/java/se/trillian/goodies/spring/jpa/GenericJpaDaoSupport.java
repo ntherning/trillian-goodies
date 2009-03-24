@@ -74,8 +74,16 @@ public abstract class GenericJpaDaoSupport<ItemType, IdType> extends JpaDaoSuppo
         });
     }
 
-    public void save(ItemType item) {
+    public void refresh(ItemType item) {
+        getJpaTemplate().refresh(item);
+    }
+
+    public void persist(ItemType item) {
         getJpaTemplate().persist(item);
+    }
+    
+    public ItemType merge(ItemType item) {
+        return getJpaTemplate().merge(item);
     }
 
     @SuppressWarnings("all")
