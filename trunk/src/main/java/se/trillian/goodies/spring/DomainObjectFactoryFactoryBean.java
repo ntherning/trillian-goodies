@@ -115,9 +115,13 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
 
     private static Constructor<?> findMatchingConstructor(Class<?> clazz, Method m) {
         LinkedList<Constructor<?>> constructors = new LinkedList<Constructor<?>>();
+        Constructor<?> directMatch = null;
         for (Constructor<?> c: clazz.getDeclaredConstructors()) {
             if (isParameterTypesPrefix(m.getParameterTypes(), c.getParameterTypes())) {
                 constructors.add(c);
+                if (directMatch == null && isParameterTypesPrefix(c.getParameterTypes(), m.getParameterTypes())) {
+                    directMatch = c;
+                }
             }
         }
         if (constructors.isEmpty()) {
@@ -125,6 +129,9 @@ public class DomainObjectFactoryFactoryBean extends AbstractFactoryBean implemen
                         + "implementation class '" + clazz + "' for factory method '" + m + "'");
         }
         if (constructors.size() > 1) {
+            if (directMatch != null) {
+                return directMatch;
+            }
             throw new IllegalArgumentException("More than 1 matching constructor "
                         + "found in implementation class '" + clazz + "' for factory method '" + m + "'");
         }

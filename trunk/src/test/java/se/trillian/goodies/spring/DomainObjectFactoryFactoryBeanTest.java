@@ -18,6 +18,8 @@ package se.trillian.goodies.spring;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.AssertionFailedError;
+
 import org.springframework.beans.factory.ListableBeanFactory;
 
 import com.agical.rmock.extension.junit.RMockTestCase;
@@ -89,6 +91,19 @@ public class DomainObjectFactoryFactoryBeanTest extends RMockTestCase {
         assertThat(impl.dependency, is.instanceOf(C.class));
     }
     
+    public void testCreateFactoryConstructor4() throws Exception {
+        ListableBeanFactory beanFactory = (ListableBeanFactory) mock(ListableBeanFactory.class);
+        
+        startVerification();
+        
+        factoryBean.afterPropertiesSet();
+        factoryBean.setBeanFactory(beanFactory);
+        Interface.Factory factory = (Interface.Factory) factoryBean.getObject();
+        Implementation impl = (Implementation) factory.create(Long.MAX_VALUE);
+        assertEquals(Long.MAX_VALUE, impl.l);
+        assertNull(impl.dependency);
+    }
+    
     public void testObjectMethods() throws Exception {
         factoryBean.afterPropertiesSet();
         Interface.Factory factory = (Interface.Factory) factoryBean.getObject();
@@ -147,6 +162,7 @@ public class DomainObjectFactoryFactoryBeanTest extends RMockTestCase {
             Interface create(String s);
             Interface create(int x);
             Interface create(double u);
+            Interface create(long l);
         }
     }
 
@@ -169,6 +185,7 @@ public class DomainObjectFactoryFactoryBeanTest extends RMockTestCase {
         public String s;
         public int x;
         public double u;
+        public long l;
         public Dependency dependency;
         public Implementation(String s, A a) {
             this.s = s;
@@ -181,6 +198,12 @@ public class DomainObjectFactoryFactoryBeanTest extends RMockTestCase {
         public Implementation(double u, C c) {
             this.u = u;
             this.dependency = c;
+        }
+        public Implementation(long l) {
+            this.l = l;
+        }
+        public Implementation(long l, A a) {
+            throw new AssertionFailedError();
         }
     }
     
