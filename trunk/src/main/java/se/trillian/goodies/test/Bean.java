@@ -20,13 +20,13 @@ import java.util.Map;
 /**
  * Interface implemented by all mocked bean instances returned by 
  * the methods in {@link MockBeanFactory}. Cast the returned
- * object to {@link MockBean} to access the methods in this 
+ * object to {@link Bean} to access the methods in this 
  * interface.
  *
  * @author Niklas Therning
  * @version $Id$
  */
-public interface MockBean {
+public interface Bean<T> {
     /**
      * Returns the value of the property with the specified name.
      * Useful when you need to read a write-only property.
@@ -42,9 +42,9 @@ public interface MockBean {
      * 
      * @param name the name of the property.
      * @param value the new value.
-     * @return this {@link MockBean} object.
+     * @return this {@link Bean} object.
      */
-    MockBean _set(String name, Object value);
+    T _set(String name, Object value);
     
     /**
      * Returns the backing {@link Map} containing the currently set 
@@ -55,11 +55,11 @@ public interface MockBean {
     Map<String, Object> _props();
     
     /**
-     * Returns a copy of this {@link MockBean}. NOTE: the target
-     * object will not be cloned. The new {@link MockBean} will
+     * Returns a copy of this {@link Bean}. NOTE: the target
+     * object will not be cloned. The new {@link Bean} will
      * use the same target object.
      * 
      * @return the copy.
      */
-    MockBean _copy();
+    T _copy();
 }
