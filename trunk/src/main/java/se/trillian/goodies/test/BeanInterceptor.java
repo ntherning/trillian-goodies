@@ -25,9 +25,8 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 /**
- * Factory for creating simple beans implementing interfaces
- * for domain objects. The returned instances will 
- * implement the {@link Bean} interface.
+ * CGLIB {@link MethodInterceptor} which is used by {@link Dummy} to intercept
+ * calls on dummy objects.
  *
  * @author Niklas Therning
  * @version $Id$
