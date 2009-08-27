@@ -18,10 +18,8 @@ package se.trillian.goodies.test;
 import java.util.Map;
 
 /**
- * Interface implemented by all mocked bean instances returned by 
- * the methods in {@link MockBeanFactory}. Cast the returned
- * object to {@link Bean} to access the methods in this 
- * interface.
+ * Interface implemented by all bean instances returned by 
+ * {@link Dummy#getObject()}.
  *
  * @author Niklas Therning
  * @version $Id$

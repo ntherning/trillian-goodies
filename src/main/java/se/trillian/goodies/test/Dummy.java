@@ -22,6 +22,48 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Used to create dummy implementations of interfaces or classes for unit tests. 
+ * Any unimplemented getters and setters defined by the interface or class will
+ * be implemented automatically. Also, the created dummy object will
+ * implements the {@link Bean} interface which can be used to set read-only
+ * properties on the dummy or get write-only properties from the dummy.
+ * <p>
+ * Use it like this:
+ * </p>
+ * <p>
+ * <pre>
+ *   // The interface we want to create a dummy for
+ *   interface User {
+ *     String getFirstName();
+ *     String getLastName();
+ *     String getDisplayName();
+ *   }
+ *   
+ *   // The base class for the dummy objects used in the test
+ *   abstract class DUser implements User, Bean&lt;DUser&gt; {
+ *     public String getDisplay() {
+ *       // This property is derived from firstName and lastName
+ *       return getFirstName() + " " + getLastName();
+ *     }
+ *   }
+ *   
+ *   DUser user = new Dummy<DUser>() {{
+ *     // Set the values of the firstName and lastName properties
+ *     set("firstName", "John");
+ *     set("lastName", "Smith");
+ *   }}.getObject();
+ *   
+ *   // Prints out "John Smith"
+ *   System.out.println(user.getDisplayName());
+ *   
+ *   // Now let's change the read-only firstName property
+ *   user._set("firstName", "Adam");
+ *   
+ *   // Prints out "Adam Smith"
+ *   System.out.println(user.getDisplayName());
+ * </pre>
+ * 
+ * </p>
  *
  * @author Niklas Therning
  * @version $Id$
