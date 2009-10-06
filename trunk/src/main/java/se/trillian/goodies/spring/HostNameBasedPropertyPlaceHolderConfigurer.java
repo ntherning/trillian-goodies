@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -35,10 +37,26 @@ import org.springframework.core.io.Resource;
  * <code>file:/some/path/jdbc.props</code>, has been set the following resources
  * will be used in the listed order:
  * <ol>
- *      <li><i>file:/some/path/jdbc-defaults.props</li>
- *      <li><i>file:/some/path/jdbc-defaults-<i>&lt;hostname&gt;</i>.props</li>
- *      <li><i>file:/some/path/jdbc.props</li>
- *      <li><i>file:/some/path/jdbc-<i>&lt;hostname&gt;</i>.props</li>
+ *      <li>file:/some/path/jdbc-defaults.props</li>
+ *      <li>file:/some/path/jdbc-defaults-<i>&lt;hostname&gt;</i>.props</li>
+ *      <li>file:/some/path/jdbc.props</li>
+ *      <li>file:/some/path/jdbc-<i>&lt;hostname&gt;</i>.props</li>
+ * </ol>
+ * </p>
+ * <p>
+ * The <code>hostNameFilterRegex</code> and <code>hostNameFilterReplacement</code> 
+ * properties can be used to transform the host name before the resource 
+ * locations are determined. E.g. if the host name is <code>test-server1</code>,
+ * <code>hostNameFilterRegex</code> has been set to the regular expression 
+ * <code>([\w-.]+)\d*</code> and <code>hostNameFilterReplacement</code> has been 
+ * set to <code>$1</code> the following resources will be loaded:
+ * <ol>
+ *      <li>file:/some/path/jdbc-defaults.props</li>
+ *      <li>file:/some/path/jdbc-defaults-test-server.props</li>
+ *      <li>file:/some/path/jdbc-defaults-test-server1.props</li>
+ *      <li>file:/some/path/jdbc.props</li>
+ *      <li>file:/some/path/jdbc-test-server.props</li>
+ *      <li>file:/some/path/jdbc-test-server1.props</li>
  * </ol>
  * </p>
  * <p>
@@ -50,7 +68,7 @@ import org.springframework.core.io.Resource;
  * If the same property occurs in more than one of the files the one loaded 
  * last will be used. If any of the files listed above is missing it will be 
  * skipped (unless {@link #setIgnoreResourceNotFound(boolean)} has been
- * set to <code>false</code>.
+ * set to <code>false</code>).
  * </p>
  * <p>
  *   The default location is <code>classpath:/spring/spring.properties</code>.
@@ -64,9 +82,21 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
 
     private static final Log log = LogFactory.getLog(HostNameBasedPropertyPlaceHolderConfigurer.class);
     
+    private String hostNameFilterRegex = null;
+    private String hostNameFilterReplacement = null;
+    private Resource[] locations;
+    
     public HostNameBasedPropertyPlaceHolderConfigurer() {
         setLocation(new ClassPathResource("/spring/spring.properties"));
         setIgnoreResourceNotFound(true);
+    }
+    
+    public void setHostNameFilterRegex(String hostNameFilterRegex) {
+        this.hostNameFilterRegex = hostNameFilterRegex;
+    }
+    
+    public void setHostNameFilterReplacement(String hostNameFilterReplacement) {
+        this.hostNameFilterReplacement = hostNameFilterReplacement;
     }
     
     @Override
@@ -75,7 +105,9 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
     }
     
     @Override
-    public void setLocations(Resource[] locations) {
+    public void postProcessBeanFactory(
+            ConfigurableListableBeanFactory beanFactory) throws BeansException {
+
 
         String hostName = "localhost";
         try {
@@ -83,6 +115,11 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
         } catch (UnknownHostException uhe) {
             log.warn("Could not determine the name for the current host. Using '" 
                     + hostName + "'.");
+        }
+
+        String filteredHostName = null;
+        if (hostNameFilterRegex != null && hostNameFilterReplacement != null) {
+            filteredHostName = hostName.replaceAll(hostNameFilterRegex, hostNameFilterReplacement);
         }
         
         try {
@@ -97,8 +134,14 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
                     basename = basename.substring(0, index);
                 }
                 newLocations.add(res.createRelative(basename + "-defaults." + extension));
+                if (filteredHostName != null) {
+                    newLocations.add(res.createRelative(basename + "-defaults-" + filteredHostName +  "." + extension));
+                }
                 newLocations.add(res.createRelative(basename + "-defaults-" + hostName +  "." + extension));
                 newLocations.add(res.createRelative(basename + "." + extension));
+                if (filteredHostName != null) {
+                    newLocations.add(res.createRelative(basename + "-" + filteredHostName +  "." + extension));
+                }
                 newLocations.add(res.createRelative(basename + "-" + hostName + "." + extension));
             }
             
@@ -106,8 +149,14 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
             
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }        
         
+        super.postProcessBeanFactory(beanFactory);
+    }
+    
+    @Override
+    public void setLocations(Resource[] locations) {
+        this.locations = locations;
     }
     
     protected String getHostName() throws UnknownHostException {

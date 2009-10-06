@@ -11,6 +11,8 @@
     <entry key="fruit2" value="${fruit2}" />
     <entry key="fruit3" value="${fruit3}" />
     <entry key="fruit4" value="${fruit4}" />
+    <entry key="fruit5" value="${fruit5}" />
+    <entry key="fruit6" value="${fruit6}" />
   </util:map>
 
 </beans>
