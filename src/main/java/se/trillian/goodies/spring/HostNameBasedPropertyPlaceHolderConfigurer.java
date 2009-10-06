@@ -48,7 +48,7 @@ import org.springframework.core.io.Resource;
  * properties can be used to transform the host name before the resource 
  * locations are determined. E.g. if the host name is <code>test-server1</code>,
  * <code>hostNameFilterRegex</code> has been set to the regular expression 
- * <code>([\w-.]+)\d*</code> and <code>hostNameFilterReplacement</code> has been 
+ * <code>([\w-.]+?)\d*</code> and <code>hostNameFilterReplacement</code> has been 
  * set to <code>$1</code> the following resources will be loaded:
  * <ol>
  *      <li>file:/some/path/jdbc-defaults.props</li>
