@@ -36,10 +36,12 @@ public class HostNameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
             new HostNameBasedPropertyPlaceHolderConfigurer() {
             @Override
             protected String getHostName() throws UnknownHostException {
-                return "foobar";
+                return "foobar-10";
             }
         };
         configurer.setLocation(new ClassPathResource("/se/trillian/goodies/spring/spring.properties"));
+        configurer.setHostNameFilterRegex("([a-z]+)-\\d+");
+        configurer.setHostNameFilterReplacement("$1");
         configurer.setIgnoreUnresolvablePlaceholders(true);
         ClassPathXmlApplicationContext context = 
             new ClassPathXmlApplicationContext("context.xml", this.getClass());
@@ -47,10 +49,12 @@ public class HostNameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
         context.refresh();
         Map<String, String> fruits = (Map<String, String>) context.getBean("fruits");
         
-        assertEquals("apple", fruits.get("fruit1"));
-        assertEquals("banana", fruits.get("fruit2"));
-        assertEquals("kiwi", fruits.get("fruit3"));
-        assertEquals("orange", fruits.get("fruit4"));
+        assertEquals("boquila", fruits.get("fruit1"));
+        assertEquals("currant", fruits.get("fruit2"));
+        assertEquals("blueberry", fruits.get("fruit3"));
+        assertEquals("raspberry", fruits.get("fruit4"));
+        assertEquals("peach", fruits.get("fruit5"));
+        assertEquals("pear", fruits.get("fruit6"));
     }
     
 }
