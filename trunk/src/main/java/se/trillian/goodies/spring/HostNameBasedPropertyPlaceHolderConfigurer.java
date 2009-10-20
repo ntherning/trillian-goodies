@@ -21,8 +21,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -80,7 +80,7 @@ import org.springframework.core.io.Resource;
 public class HostNameBasedPropertyPlaceHolderConfigurer extends
                 PropertyPlaceholderConfigurer {
 
-    private static final Log log = LogFactory.getLog(HostNameBasedPropertyPlaceHolderConfigurer.class);
+    private static final Logger log = LoggerFactory.getLogger(HostNameBasedPropertyPlaceHolderConfigurer.class);
     
     private String hostNameFilterRegex = null;
     private String hostNameFilterReplacement = null;
