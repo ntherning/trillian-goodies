@@ -27,8 +27,8 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 
@@ -66,7 +66,7 @@ import org.springframework.util.Assert;
  * @version $Id$
  */
 public class ViewForwardResolution extends ForwardResolution {
-    private static final Log log = LogFactory.getLog(ViewForwardResolution.class);
+    private static final Logger log = LoggerFactory.getLogger(ViewForwardResolution.class);
     
     private String prefix = "/WEB-INF/jsp";
     private String suffix = ".jsp";
