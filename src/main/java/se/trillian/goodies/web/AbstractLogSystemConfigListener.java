@@ -25,21 +25,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * {@link ServletContextListener} which automatically loads a Logback config file 
- * based on the current host's host name or a prefix thereof.
- * <p>
- * This class will first look for a file named 
- * <code>/WEB-INF/logback-<i>&lt;hostname&gt;</i>.xml</code>. 
- * If no such file is found it will look for a file named 
- * <code>/WEB-INF/logback-<i>&lt;hostname-prefix&gt;</i>.xml</code> where 
- * <i>hostname-prefix</i> is a prefix of the host name. The file with the 
- * longest prefix of the host name in its name will be loaded.
- * </p>
- * <p>
- * If no file is found containing the host name or a prefix of it the file named
- * <code>/WEB-INF/logback.xml</code> will be used. If no such file 
- * exists Logback will be initialized using its default look up strategy.
- * </p>
+ * Abstract {@link ServletContextListener} which automatically loads a logging 
+ * system config file based on the current host's host name or a prefix thereof.
  * 
  * @author Niklas Therning
  * @version $Id$
