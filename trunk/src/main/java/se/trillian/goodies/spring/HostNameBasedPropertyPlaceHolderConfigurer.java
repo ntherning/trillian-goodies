@@ -82,8 +82,7 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
 
     private static final Logger log = LoggerFactory.getLogger(HostNameBasedPropertyPlaceHolderConfigurer.class);
     
-    private String hostNameFilterRegex = null;
-    private String hostNameFilterReplacement = null;
+    private List<Filter> hostNameFilters = new ArrayList<Filter>();
     private Resource[] locations;
     
     public HostNameBasedPropertyPlaceHolderConfigurer() {
@@ -91,12 +90,15 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
         setIgnoreResourceNotFound(true);
     }
     
-    public void setHostNameFilterRegex(String hostNameFilterRegex) {
-        this.hostNameFilterRegex = hostNameFilterRegex;
-    }
-    
-    public void setHostNameFilterReplacement(String hostNameFilterReplacement) {
-        this.hostNameFilterReplacement = hostNameFilterReplacement;
+    public void setHostNameFilters(List<String> filters) {
+        this.hostNameFilters.clear();
+        for (String s : filters) {
+            String[] parts = s.split("=>");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("=> not found in string '" + s + "'");
+            }
+            this.hostNameFilters.add(new Filter(parts[0], parts[1]));
+        }
     }
     
     @Override
@@ -117,11 +119,6 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
                     + hostName + "'.");
         }
 
-        String filteredHostName = null;
-        if (hostNameFilterRegex != null && hostNameFilterReplacement != null) {
-            filteredHostName = hostName.replaceAll(hostNameFilterRegex, hostNameFilterReplacement);
-        }
-        
         try {
             
             List<Resource> newLocations = new ArrayList<Resource>();
@@ -134,12 +131,14 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
                     basename = basename.substring(0, index);
                 }
                 newLocations.add(res.createRelative(basename + "-defaults." + extension));
-                if (filteredHostName != null) {
+                for (Filter f : hostNameFilters) {
+                    String filteredHostName = hostName.replaceAll(f.getPattern(), f.getReplacement());
                     newLocations.add(res.createRelative(basename + "-defaults-" + filteredHostName +  "." + extension));
                 }
                 newLocations.add(res.createRelative(basename + "-defaults-" + hostName +  "." + extension));
                 newLocations.add(res.createRelative(basename + "." + extension));
-                if (filteredHostName != null) {
+                for (Filter f : hostNameFilters) {
+                    String filteredHostName = hostName.replaceAll(f.getPattern(), f.getReplacement());
                     newLocations.add(res.createRelative(basename + "-" + filteredHostName +  "." + extension));
                 }
                 newLocations.add(res.createRelative(basename + "-" + hostName + "." + extension));
@@ -163,4 +162,18 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
         return InetAddress.getLocalHost().getHostName();
     }
     
+    public static class Filter {
+        private final String pattern;
+        private final String replacement;
+        public Filter(String pattern, String replacement) {
+            this.pattern = pattern;
+            this.replacement = replacement;
+        }
+        public String getPattern() {
+            return pattern;
+        }
+        public String getReplacement() {
+            return replacement;
+        }
+    }
 }
