@@ -44,17 +44,19 @@ import org.springframework.core.io.Resource;
  * </ol>
  * </p>
  * <p>
- * The <code>hostNameFilterRegex</code> and <code>hostNameFilterReplacement</code> 
- * properties can be used to transform the host name before the resource 
- * locations are determined. E.g. if the host name is <code>test-server1</code>,
- * <code>hostNameFilterRegex</code> has been set to the regular expression 
- * <code>([\w-.]+?)\d*</code> and <code>hostNameFilterReplacement</code> has been 
- * set to <code>$1</code> the following resources will be loaded:
+ * The <code>hostNameFilters</code> property can be used to transform the host 
+ * name a number of times before the resource locations are determined. The 
+ * format of a filter is <code>regexp=>replacement</code>. E.g. if 
+ * the host name is <code>test-server1</code> and <code>hostNameFilters</code> 
+ * has been set to <code>["^([a-zA-Z]+).*=>$1", "^([a-zA-Z]+)-([a-zA-Z]+).*=>$1-$2"]</code> 
+ * the following resources will be loaded in the following order:
  * <ol>
  *      <li>file:/some/path/jdbc-defaults.props</li>
+ *      <li>file:/some/path/jdbc-defaults-test.props</li>
  *      <li>file:/some/path/jdbc-defaults-test-server.props</li>
  *      <li>file:/some/path/jdbc-defaults-test-server1.props</li>
  *      <li>file:/some/path/jdbc.props</li>
+ *      <li>file:/some/path/jdbc-test.props</li>
  *      <li>file:/some/path/jdbc-test-server.props</li>
  *      <li>file:/some/path/jdbc-test-server1.props</li>
  * </ol>
@@ -71,7 +73,7 @@ import org.springframework.core.io.Resource;
  * set to <code>false</code>).
  * </p>
  * <p>
- *   The default location is <code>classpath:/spring/spring.properties</code>.
+ * The default location is <code>classpath:/spring/spring.properties</code>.
  * </p>
  * 
  * @author Niklas Therning
@@ -121,7 +123,7 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
 
         try {
             
-            List<Resource> newLocations = new ArrayList<Resource>();
+            List<Resource> tempLocations = new ArrayList<Resource>();
             for (Resource res : locations) {
                 String basename = res.getFilename();
                 String extension = "";
@@ -130,20 +132,27 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
                     extension = basename.substring(index + 1);
                     basename = basename.substring(0, index);
                 }
-                newLocations.add(res.createRelative(basename + "-defaults." + extension));
+                tempLocations.add(res.createRelative(basename + "-defaults." + extension));
                 for (Filter f : hostNameFilters) {
                     String filteredHostName = hostName.replaceAll(f.getPattern(), f.getReplacement());
-                    newLocations.add(res.createRelative(basename + "-defaults-" + filteredHostName +  "." + extension));
+                    tempLocations.add(res.createRelative(basename + "-defaults-" + filteredHostName +  "." + extension));
                 }
-                newLocations.add(res.createRelative(basename + "-defaults-" + hostName +  "." + extension));
-                newLocations.add(res.createRelative(basename + "." + extension));
+                tempLocations.add(res.createRelative(basename + "-defaults-" + hostName +  "." + extension));
+                tempLocations.add(res.createRelative(basename + "." + extension));
                 for (Filter f : hostNameFilters) {
                     String filteredHostName = hostName.replaceAll(f.getPattern(), f.getReplacement());
-                    newLocations.add(res.createRelative(basename + "-" + filteredHostName +  "." + extension));
+                    tempLocations.add(res.createRelative(basename + "-" + filteredHostName +  "." + extension));
                 }
-                newLocations.add(res.createRelative(basename + "-" + hostName + "." + extension));
+                tempLocations.add(res.createRelative(basename + "-" + hostName + "." + extension));
             }
             
+            List<Resource> newLocations = new ArrayList<Resource>();
+            for (Resource r : tempLocations) {
+                // Make sure we add a location only once.
+                if (!newLocations.contains(r)) {
+                    newLocations.add(r);
+                }
+            }
             super.setLocations(newLocations.toArray(new Resource[0]));
             
         } catch (IOException e) {
