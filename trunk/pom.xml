@@ -215,8 +215,9 @@
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>1.6.2</version>
+      <artifactId>ehcache-core</artifactId>
+      <scope>compile</scope>
+      <version>2.1.1</version>
     </dependency> 
     
   </dependencies>
@@ -275,6 +276,18 @@
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>sourceforge</id>
+      <url>http://oss.sonatype.org/content/groups/sourceforge/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository> 
+  </repositories>
   <distributionManagement>
     <repository>
       <id>local</id>
