@@ -41,6 +41,8 @@ public class DisableSessionIdInUrlFilter implements Filter {
     private static final Pattern SESSION_ID_PATTERN = 
         Pattern.compile(SESSION_ID_REG_EXP);
 
+    private Pattern disableForPathPattern = null;
+    
     public void doFilter(ServletRequest req, ServletResponse res,
                          FilterChain chain) 
             throws IOException, ServletException {
@@ -48,13 +50,20 @@ public class DisableSessionIdInUrlFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         
-        HttpServletRequest newRequest = new RequestWrapper(request);
-        HttpServletResponse newResponse = new ResponseWrapper(response);
-        
-        chain.doFilter(newRequest, newResponse);
+        /*Do not remove session id from API requests.*/
+        String path = request.getServletPath();
+        if (path == null || disableForPathPattern == null || (!disableForPathPattern.matcher(path).matches())) {
+            request = new RequestWrapper(request);
+            response = new ResponseWrapper(response);
+        }
+        chain.doFilter(request, response);
     }
 
-    public void init(FilterConfig fc) throws ServletException {}
+    public void init(FilterConfig fc) throws ServletException {
+        String pattern = fc.getInitParameter("disable-for-path-pattern");
+        disableForPathPattern = Pattern.compile(pattern);
+    }
+    
     public void destroy() {}
     
     private static class RequestWrapper extends HttpServletRequestWrapper {
