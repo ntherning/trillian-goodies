@@ -160,7 +160,11 @@ public class ApplicationLauncher {
         
         return null;
     }
-
+    
+    public AbstractXmlApplicationContext getContext() {
+        return context;
+    }
+    
     private String getLogbackFile(String path) throws FileNotFoundException {
         File f = new File(path);
         if (f.isFile() && f.exists()) {
