@@ -72,6 +72,7 @@ import ch.qos.logback.core.util.StatusPrinter;
 public class ApplicationLauncher {
     private static final Logger log = LoggerFactory.getLogger(ApplicationLauncher.class);
     private static final String hostName;
+    private static final String fullHostName;
     
     static {
         String name = "localhost";
@@ -81,7 +82,13 @@ public class ApplicationLauncher {
             log.warn("Could not determine the name for the current host. Using '" 
                     + name + "'.");
         }
-        hostName = name;
+        fullHostName = name;
+        int dotIndex = fullHostName.indexOf('.');
+        if (dotIndex != -1) {
+            hostName = fullHostName.substring(0, dotIndex);
+        } else {
+            hostName = fullHostName;
+        }
     }
     
     private AbstractXmlApplicationContext context = null;
@@ -146,7 +153,8 @@ public class ApplicationLauncher {
                 log.info("Configuring logback from file '" + logFile + "'");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
                 lc.reset();
-                lc.putProperty("hostname", hostName);
+                lc.putProperty("se.trillian.goodies.hostname", hostName);
+                lc.putProperty("se.trillian.goodies.hostname.full", fullHostName);
                 
                 try {
                    JoranConfigurator configurator = new JoranConfigurator();

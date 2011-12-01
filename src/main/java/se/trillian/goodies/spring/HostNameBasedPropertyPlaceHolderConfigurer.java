@@ -113,6 +113,7 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
     protected Properties mergeProperties() throws IOException {
         Properties properties = super.mergeProperties();
         properties.put("se.trillian.goodies.hostname", getHostName());
+        properties.put("se.trillian.goodies.hostname.full", getFullHostName());
         return properties;
     }
     
@@ -171,13 +172,22 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
         this.locations = locations;
     }
     
-    protected String getHostName() {
+    protected String getFullHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException uhe) {
             log.warn("Could not determine the name for the current host. Using 'localhost'.");
         }
         return "localhost";
+    }
+    
+    protected String getHostName() {
+        String hostName = getFullHostName();
+        int dotIndex = hostName.indexOf('.');
+        if (dotIndex != -1) {
+            hostName = hostName.substring(0, dotIndex);
+        }
+        return hostName;
     }
     
     public static class Filter {

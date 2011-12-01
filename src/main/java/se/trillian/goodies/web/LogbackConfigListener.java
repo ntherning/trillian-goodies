@@ -63,7 +63,8 @@ public class LogbackConfigListener extends AbstractLogSystemConfigListener {
     protected void configure(String logFile) {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.reset();
-        lc.putProperty("hostname", getHostName());
+        lc.putProperty("se.trillian.goodies.hostname", getHostName());
+        lc.putProperty("se.trillian.goodies.hostname.full", getFullHostName());
         
         try {
            JoranConfigurator configurator = new JoranConfigurator();
