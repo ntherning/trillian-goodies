@@ -35,7 +35,7 @@ public abstract class AbstractLogSystemConfigListener implements ServletContextL
     private final String logSystem;
     private final String base;
     private final String[] extensions;
-    private String hostName;
+    private String fullHostName;
     
     protected ServletContext servletContext;
     
@@ -58,17 +58,26 @@ public abstract class AbstractLogSystemConfigListener implements ServletContextL
     }
     
     protected String getHostName() {
-        if (hostName == null) {
-            hostName = "localhost";
+        String hostName = getFullHostName();
+        int dotIndex = hostName.indexOf('.');
+        if (dotIndex != -1) {
+            hostName = hostName.substring(0, dotIndex);
+        }
+        return hostName;
+    }
+    
+    protected String getFullHostName() {
+        if (fullHostName == null) {
+            fullHostName = "localhost";
             try {
-                hostName = InetAddress.getLocalHost().getHostName();
+                fullHostName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException uhe) {
                 servletContext.log(this.getClass().getName() + ": Could not " 
                         + "determine the name for the current host. Using '"  
-                        + hostName + "' instead.");
+                        + fullHostName + "' instead.");
             }
         }
-        return hostName;
+        return fullHostName;
     }
     
     protected String getConfigFile(String path) throws FileNotFoundException {
