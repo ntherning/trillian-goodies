@@ -35,6 +35,9 @@ public abstract class AbstractLogSystemConfigListener implements ServletContextL
     private final String logSystem;
     private final String base;
     private final String[] extensions;
+    private String hostName;
+    
+    protected ServletContext servletContext;
     
     protected AbstractLogSystemConfigListener(String logSystem, String base, String[] extensions) {
         this.logSystem = logSystem;
@@ -54,7 +57,21 @@ public abstract class AbstractLogSystemConfigListener implements ServletContextL
         return realPath;
     }
     
-    protected String getConfigFile(ServletContext servletContext, String path) throws FileNotFoundException {
+    protected String getHostName() {
+        if (hostName == null) {
+            hostName = "localhost";
+            try {
+                hostName = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException uhe) {
+                servletContext.log(this.getClass().getName() + ": Could not " 
+                        + "determine the name for the current host. Using '"  
+                        + hostName + "' instead.");
+            }
+        }
+        return hostName;
+    }
+    
+    protected String getConfigFile(String path) throws FileNotFoundException {
         String location = getRealPath(servletContext, "/WEB-INF/" + path);
         File f = new File(location);
         if (f.isFile() && f.exists()) {
@@ -63,40 +80,39 @@ public abstract class AbstractLogSystemConfigListener implements ServletContextL
         throw new FileNotFoundException();
     }
     
-    protected String getDefaultConfigFile(ServletContext servletContext) {
-        String hostName = "localhost";
-        try {
-            hostName = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException uhe) {
-            servletContext.log(this.getClass().getName() + ": Could not " 
-                    + "determine the name for the current host. Using '"  
-                    + hostName + "' instead.");
-        }
-        
+    protected String getDefaultConfigFile() {
+        String hostName = getHostName();
         String hostNamePrefix = hostName;
+        String suffix = "";        
         while (hostNamePrefix.length() > 0) {
             for (String extension : extensions) {
                 try {
-                    return getConfigFile(servletContext, base + "-" + hostNamePrefix + "." + extension);
+                    return getConfigFile(base + "-" + hostNamePrefix + "." + extension);
                 } catch (FileNotFoundException e) {}
+                if (suffix.length() > 0) {
+                    try {
+                        return getConfigFile(base + "-" + hostNamePrefix + suffix + "." + extension);
+                    } catch (FileNotFoundException e) {}
+                }            
             }
             hostNamePrefix = hostName.substring(0, hostNamePrefix.length() - 1);
+            suffix = suffix + "X";            
         }
 
         for (String extension : extensions) {
             try {
-                return getConfigFile(servletContext, base + "." + extension);
+                return getConfigFile(base + "." + extension);
             } catch (FileNotFoundException e) {}
         }
 
         return null;
     }
 
-    protected abstract void configure(ServletContext servletContext, String logFile);
+    protected abstract void configure(String logFile);
     
     public void contextInitialized(ServletContextEvent event) {
-        ServletContext servletContext = event.getServletContext();
-        String logFile = getDefaultConfigFile(servletContext);
+        this.servletContext = event.getServletContext();
+        String logFile = getDefaultConfigFile();
         if (logFile == null) {
             servletContext.log(this.getClass().getName() + ": Could not find " 
                     + "a " + logSystem + " config file. Default configuration " 
@@ -107,7 +123,7 @@ public abstract class AbstractLogSystemConfigListener implements ServletContextL
         servletContext.log(this.getClass().getName() + ": Initializing " 
                 + logSystem + " from " + logFile);
 
-        configure(servletContext, logFile);
+        configure(logFile);
     }
 
 }

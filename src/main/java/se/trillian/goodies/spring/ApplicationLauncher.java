@@ -48,8 +48,13 @@ import ch.qos.logback.core.util.StatusPrinter;
  * file named <code>logback-<i>&lt;hostname&gt;</i>.xml</code> in the 
  * working directory. If no such file is found it will look for a file named 
  * <code>logback-<i>&lt;hostname-prefix&gt;</i>.xml</code> where 
- * <i>hostname-prefix</i> is a prefix of the host name. The file with the 
- * longest prefix of the host name in its name will be loaded.
+ * <i>hostname-prefix</i> is a prefix of the host name. If no such file is found 
+ * it will look for a file named <code>logback-<i>&lt;hostname-prefix&gt;</i>{X...}.xml</code>.
+ * The file with the longest prefix of the host name in its name will be loaded.
+ * E.g. if the hostname is <code>s10</code> the following files will be tried:
+ * <code>logback-s10.xml</code>, <code>logback-s1.xml</code>, <code>logback-s1X.xml</code>,
+ * <code>logback-s.xml</code>, <code>logback-sXX.xml</code>, <code>logback-.xml</code>,
+ * <code>logback-XXX.xml</code>
  * </p>
  * <p>
  * If no file is found containing the host name or a prefix of it the file named
@@ -66,6 +71,18 @@ import ch.qos.logback.core.util.StatusPrinter;
  */
 public class ApplicationLauncher {
     private static final Logger log = LoggerFactory.getLogger(ApplicationLauncher.class);
+    private static final String hostName;
+    
+    static {
+        String name = "localhost";
+        try {
+            name = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException uhe) {
+            log.warn("Could not determine the name for the current host. Using '" 
+                    + name + "'.");
+        }
+        hostName = name;
+    }
     
     private AbstractXmlApplicationContext context = null;
     
@@ -128,11 +145,12 @@ public class ApplicationLauncher {
             if (logFile != null) {
                 log.info("Configuring logback from file '" + logFile + "'");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+                lc.reset();
+                lc.putProperty("hostname", hostName);
                 
                 try {
                    JoranConfigurator configurator = new JoranConfigurator();
                    configurator.setContext(lc);
-                   lc.reset();
                    configurator.doConfigure(logFile);
                 } catch (JoranException je) {
                    StatusPrinter.print(lc);
@@ -174,20 +192,19 @@ public class ApplicationLauncher {
     }
     
     private String getDefaultLogbackFile() {
-        String hostName = "localhost";
-        try {
-            hostName = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException uhe) {
-            log.warn("Could not determine the name for the current host. Using '" 
-                    + hostName + "'.");
-        }
-        
         String prefix = hostName;
+        String suffix = "";
         while (prefix.length() > 0) {
             try {
                 return getLogbackFile("logback-" + prefix + ".xml");
             } catch (FileNotFoundException e) {}
+            if (suffix.length() > 0) {
+                try {
+                    return getLogbackFile("logback-" + prefix + suffix + ".xml");
+                } catch (FileNotFoundException e) {}
+            }
             prefix = hostName.substring(0, prefix.length() - 1);
+            suffix = suffix + "X";
         }
 
         try {

@@ -15,7 +15,6 @@
  */
 package se.trillian.goodies.spring;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class HostNameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
         HostNameBasedPropertyPlaceHolderConfigurer configurer = 
             new HostNameBasedPropertyPlaceHolderConfigurer() {
             @Override
-            protected String getHostName() throws UnknownHostException {
+            protected String getHostName() {
                 return "foobar-10";
             }
         };
@@ -60,6 +59,10 @@ public class HostNameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
         assertEquals("raspberry", fruits.get("fruit4"));
         assertEquals("peach", fruits.get("fruit5"));
         assertEquals("pear", fruits.get("fruit6"));
+        
+        Map<String, String> hostname = (Map<String, String>) context.getBean("hostname");
+        assertEquals("foobar-10", hostname.get("hostname1"));
+        assertEquals("foobar-10", hostname.get("hostname2"));
     }
     
 }
