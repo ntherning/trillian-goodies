@@ -135,13 +135,17 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
                 tempLocations.add(res.createRelative(basename + "-defaults." + extension));
                 for (Filter f : hostNameFilters) {
                     String filteredHostName = hostName.replaceAll(f.getPattern(), f.getReplacement());
-                    tempLocations.add(res.createRelative(basename + "-defaults-" + filteredHostName +  "." + extension));
+                    if (!filteredHostName.equals(hostName)) {
+                        tempLocations.add(res.createRelative(basename + "-defaults-" + filteredHostName +  "." + extension));
+                    }
                 }
                 tempLocations.add(res.createRelative(basename + "-defaults-" + hostName +  "." + extension));
                 tempLocations.add(res.createRelative(basename + "." + extension));
                 for (Filter f : hostNameFilters) {
                     String filteredHostName = hostName.replaceAll(f.getPattern(), f.getReplacement());
-                    tempLocations.add(res.createRelative(basename + "-" + filteredHostName +  "." + extension));
+                    if (!filteredHostName.equals(hostName)) {
+                        tempLocations.add(res.createRelative(basename + "-" + filteredHostName +  "." + extension));
+                    }
                 }
                 tempLocations.add(res.createRelative(basename + "-" + hostName + "." + extension));
             }
