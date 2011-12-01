@@ -15,4 +15,9 @@
     <entry key="fruit6" value="${fruit6}" />
   </util:map>
 
+  <util:map id="hostname">
+    <entry key="hostname1" value="${se.trillian.goodies.hostname}" />
+    <entry key="hostname2" value="${hostname}" />
+  </util:map>
+  
 </beans>

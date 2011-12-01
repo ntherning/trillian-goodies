@@ -60,13 +60,14 @@ public class LogbackConfigListener extends AbstractLogSystemConfigListener {
     }
     
     @Override
-    protected void configure(ServletContext servletContext, String logFile) {
+    protected void configure(String logFile) {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.reset();
+        lc.putProperty("hostname", getHostName());
         
         try {
            JoranConfigurator configurator = new JoranConfigurator();
            configurator.setContext(lc);
-           lc.reset();
            configurator.doConfigure(logFile);
         } catch (JoranException je) {
            StatusPrinter.print(lc);

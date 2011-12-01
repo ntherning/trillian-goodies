@@ -20,6 +20,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,18 +110,17 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
     }
     
     @Override
+    protected Properties mergeProperties() throws IOException {
+        Properties properties = super.mergeProperties();
+        properties.put("se.trillian.goodies.hostname", getHostName());
+        return properties;
+    }
+    
+    @Override
     public void postProcessBeanFactory(
             ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
-
-        String hostName = "localhost";
-        try {
-            hostName = getHostName();
-        } catch (UnknownHostException uhe) {
-            log.warn("Could not determine the name for the current host. Using '" 
-                    + hostName + "'.");
-        }
-
+        String hostName = getHostName();
         try {
             
             List<Resource> tempLocations = new ArrayList<Resource>();
@@ -171,8 +171,13 @@ public class HostNameBasedPropertyPlaceHolderConfigurer extends
         this.locations = locations;
     }
     
-    protected String getHostName() throws UnknownHostException {
-        return InetAddress.getLocalHost().getHostName();
+    protected String getHostName() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException uhe) {
+            log.warn("Could not determine the name for the current host. Using 'localhost'.");
+        }
+        return "localhost";
     }
     
     public static class Filter {
