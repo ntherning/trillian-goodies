@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 package se.trillian.goodies.spring;
+
 import java.net.UnknownHostException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -41,7 +43,10 @@ public class HostNameBasedPropertyPlaceHolderConfigurerTest extends TestCase {
             }
         };
         configurer.setLocation(new ClassPathResource("/se/trillian/goodies/spring/spring.properties"));
-        configurer.setHostNameFilters(Collections.singletonList("([a-z]+)-\\d+=>$1"));
+        List<String> hostNameFilters = new ArrayList<String>();
+        hostNameFilters.add("nonmatchingfilter=>$1");
+        hostNameFilters.add("([a-z]+)-\\d+=>$1");
+        configurer.setHostNameFilters(hostNameFilters);
         configurer.setIgnoreUnresolvablePlaceholders(true);
         ClassPathXmlApplicationContext context = 
             new ClassPathXmlApplicationContext("context.xml", this.getClass());
