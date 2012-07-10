@@ -157,11 +157,11 @@ public class ApplicationLauncher {
                 lc.putProperty("se.trillian.goodies.hostname.full", fullHostName);
                 
                 try {
-                   JoranConfigurator configurator = new JoranConfigurator();
-                   configurator.setContext(lc);
-                   configurator.doConfigure(logFile);
+                    JoranConfigurator configurator = new JoranConfigurator();
+                    configurator.setContext(lc);
+                    configurator.doConfigure(logFile);
                 } catch (JoranException je) {
-                   StatusPrinter.print(lc);
+                    StatusPrinter.print(lc);
                 } 
             }
         } catch (Throwable t) {
@@ -223,6 +223,10 @@ public class ApplicationLauncher {
     }
     
     public int stop(int exitCode) {
+        // Shutdown logback before closing the Spring context to 
+        // avoid noisy ERROR logging during shutdown
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.reset();
         
         if (context != null) {
             context.close();
