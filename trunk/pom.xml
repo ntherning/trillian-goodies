@@ -3,7 +3,7 @@
   <groupId>se.trillian.goodies</groupId>
   <artifactId>trillian-goodies</artifactId>
   <packaging>jar</packaging>
-  <version>0.35-SNAPSHOT</version>
+  <version>0.34-SNAPSHOT</version>
   <name>Trillian Goodies</name>
   <url>http://trillian-goodies.googlecode.com</url>
   <description>Trillian Goodies provides some good-to-have classes when 
