@@ -3,7 +3,7 @@
   <groupId>se.trillian.goodies</groupId>
   <artifactId>trillian-goodies</artifactId>
   <packaging>jar</packaging>
-  <version>0.34</version>
+  <version>0.35-SNAPSHOT</version>
   <name>Trillian Goodies</name>
   <url>http://trillian-goodies.googlecode.com</url>
   <description>Trillian Goodies provides some good-to-have classes when 
@@ -16,9 +16,9 @@
       </license>
   </licenses>
   <scm>
-      <connection>scm:svn:http://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.34</connection>
-      <developerConnection>scm:svn:https://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.34</developerConnection>  
-      <url>https://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.34</url>
+      <connection>scm:svn:http://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.32</connection>
+      <developerConnection>scm:svn:https://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.32</developerConnection>  
+      <url>https://trillian-goodies.googlecode.com/svn/tags/trillian-goodies-0.32</url>
   </scm>
   <organization>
     <name>Trillian AB</name>
