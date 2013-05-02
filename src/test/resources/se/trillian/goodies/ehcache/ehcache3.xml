@@ -1,4 +1,4 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd" name="cacheManager1">
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd" name="cacheManager3">
   <defaultCache maxElementsInMemory="10000" eternal="true" overflowToDisk="false">
     <cacheEventListenerFactory 
             class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"

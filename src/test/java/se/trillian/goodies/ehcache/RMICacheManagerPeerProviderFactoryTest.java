@@ -63,9 +63,9 @@ public class RMICacheManagerPeerProviderFactoryTest extends TestCase {
     public void testDistributedCaching() throws Exception {
         CacheManager man1 = new CacheManager(getClass().getResource("ehcache.xml"));
         ((UnicastRMICacheManagerPeerProvider) man1.getCacheManagerPeerProvider("RMI")).getHeartBeatSender().setHeartbeatInterval(1000);
-        CacheManager man2 = new CacheManager(getClass().getResource("ehcache.xml"));
+        CacheManager man2 = new CacheManager(getClass().getResource("ehcache2.xml"));
         ((UnicastRMICacheManagerPeerProvider) man2.getCacheManagerPeerProvider("RMI")).getHeartBeatSender().setHeartbeatInterval(1000);
-        CacheManager man3 = new CacheManager(getClass().getResource("ehcache.xml"));
+        CacheManager man3 = new CacheManager(getClass().getResource("ehcache3.xml"));
         ((UnicastRMICacheManagerPeerProvider) man3.getCacheManagerPeerProvider("RMI")).getHeartBeatSender().setHeartbeatInterval(1000);
         
         man1.addCache("cache1");
