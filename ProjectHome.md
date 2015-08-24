@@ -1,0 +1,1 @@
+This project contains helpers that ease Java development when using Stripes, Spring, Hibernate, JSP etc.
